@@ -80,6 +80,9 @@ class Investment extends Ofx
             $account->statement->transactions = $this->buildTransactions(
                 $statementResponse->INVTRANLIST->children()
             );
+        } else {
+            // Shouldn't this just be the default value in the Entity?
+            $account->statement->transactions = [];
         }
 
         return $account;
