@@ -68,17 +68,19 @@ class Investment extends Ofx
         $account->statement = new Statement();
         $account->statement->currency = (string) $statementResponse->CURDEF;
 
-        $account->statement->startDate = Utils::createDateTimeFromStr(
-            $statementResponse->INVTRANLIST->DTSTART
-        );
+        if (@count($statementResponse->INVTRANLIST)) {
+            $account->statement->startDate = Utils::createDateTimeFromStr(
+                $statementResponse->INVTRANLIST->DTSTART
+            );
 
-        $account->statement->endDate = Utils::createDateTimeFromStr(
-            $statementResponse->INVTRANLIST->DTEND
-        );
+            $account->statement->endDate = Utils::createDateTimeFromStr(
+                $statementResponse->INVTRANLIST->DTEND
+            );
 
-        $account->statement->transactions = $this->buildTransactions(
-            $statementResponse->INVTRANLIST->children()
-        );
+            $account->statement->transactions = $this->buildTransactions(
+                $statementResponse->INVTRANLIST->children()
+            );
+        }
 
         return $account;
     }
