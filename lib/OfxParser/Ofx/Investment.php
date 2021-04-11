@@ -14,6 +14,8 @@ use OfxParser\Entities\Investment\Transaction\BuyStock;
 use OfxParser\Entities\Investment\Transaction\Income;
 use OfxParser\Entities\Investment\Transaction\Reinvest;
 use OfxParser\Entities\Investment\Transaction\SellMutualFund;
+use OfxParser\Entities\Investment\Transaction\SellSecurity;
+use OfxParser\Entities\Investment\Transaction\SellStock;
 
 class Investment extends Ofx
 {
@@ -124,6 +126,12 @@ class Investment extends Ofx
                     break;
                 case 'SELLMF':
                     $item = new SellMutualFund();
+                    break;
+                case 'SELLOTHER':
+                    $item = new SellSecurity();
+                    break;
+                case 'SELLSTOCK':
+                    $item = new SellStock();
                     break;
                 case 'DTSTART':
                     // already processed

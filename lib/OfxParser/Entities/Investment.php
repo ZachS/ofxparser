@@ -32,5 +32,20 @@ abstract class Investment extends AbstractEntity implements Inspectable, OfxLoad
     {
         throw new \Exception('loadOfx method not defined in class "' . get_class() . '"');
     }
+
+    /**
+     * Populates instance properties from a node for the map provided.
+     * @param array $map array(property_name => node_name, ...)
+     * @param SimpleXMLElement $node
+     * @return $this
+     */
+    public function loadMap($map, $node)
+    {
+        foreach ($map as $propName => $nodeName) {
+            if (@count($node->{$nodeName}) > 0) {
+                $this->{$propName} = (string) $node->{$nodeName};
+            }
+        }
+    }
 }
 

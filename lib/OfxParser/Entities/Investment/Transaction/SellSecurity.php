@@ -27,6 +27,7 @@ use OfxParser\Entities\Investment\Transaction\Traits\Pricing;
  * <SUBACCTFUND>
  *
  * Optional:
+ * <GAIN>
  * ...many...
  *
  * Partial implementation.
@@ -46,6 +47,12 @@ class SellSecurity extends Investment
     public $nodeName = 'SELLOTHER';
 
     /**
+     * How much gain is on the sale?
+     * @var number
+     */
+    public $gain = null;
+
+    /**
      * Imports the OFX data for this node.
      * @param SimpleXMLElement $node
      * @return $this
@@ -55,7 +62,10 @@ class SellSecurity extends Investment
         // Transaction data is nested within <INVBUY> child node
         $this->loadInvTran($node->INVSELL->INVTRAN)
             ->loadSecId($node->INVSELL->SECID)
-            ->loadPricing($node->INVSELL);
+            ->loadPricing($node->INVSELL)
+            ->loadMap(array(
+                'gain' => 'GAIN',
+            ), $node->INVSELL);
 
         return $this;
     }
