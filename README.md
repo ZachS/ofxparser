@@ -1,7 +1,7 @@
 OFX Parser
 =================
 
-[![Build Status](https://travis-ci.org/asgrim/ofxparser.svg?branch=master)](https://travis-ci.org/asgrim/ofxparser) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/asgrim/ofxparser/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/asgrim/ofxparser/?branch=master) [![Code Coverage](https://scrutinizer-ci.com/g/asgrim/ofxparser/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/asgrim/ofxparser/?branch=master) [![Latest Stable Version](https://poser.pugx.org/asgrim/ofxparser/v/stable)](https://packagist.org/packages/asgrim/ofxparser) [![License](https://poser.pugx.org/asgrim/ofxparser/license)](https://packagist.org/packages/asgrim/ofxparser)
+[![Build Status](https://travis-ci.org/gitmathias/ofxparser.svg?branch=main)](https://travis-ci.org/gitmathias/ofxparser) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/gitmathias/ofxparser/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/gitmathias/ofxparser/?branch=main) [![Code Coverage](https://scrutinizer-ci.com/g/gitmathias/ofxparser/badges/coverage.png?b=main)](https://scrutinizer-ci.com/g/gitmathias/ofxparser/?branch=main) [![Latest Stable Version](https://poser.pugx.org/gitmathias/ofxparser/v/stable)](https://packagist.org/packages/gitmathias/ofxparser) [![License](https://poser.pugx.org/gitmathias/ofxparser/license)](https://packagist.org/packages/gitmathias/ofxparser)
 
 OFX Parser is a PHP library designed to parse an OFX file downloaded from a financial institution into simple PHP objects.
 
@@ -12,7 +12,7 @@ It supports multiple Bank Accounts, the required "Sign On" response, and recogni
 Simply require the package using [Composer](https://getcomposer.org/):
 
 ```bash
-$ composer require asgrim/ofxparser
+$ composer require gitmathias/ofxparser
 ```
 
 ## Usage
@@ -79,5 +79,6 @@ foreach ($ofx->bankAccounts as $accountData) {
 
 ## Fork & Credits
 
-This is a fork of [grimfor/ofxparser](https://github.com/Grimfor/ofxparser) made to be framework independent. The source repo was designed for Symfony 2 framework, so credit should be given where credit due!
-Heavily refactored by [Oliver Lowe](https://github.com/loweoj) and loosely based on the ruby [ofx-parser by Andrew A. Smith](https://github.com/aasmith/ofx-parser).
+Fork of archived project [asgrim/ofxparser](https://github.com/asgrim/ofxparser).
+
+Archive was originally forked from [grimfor/ofxparser](https://github.com/Grimfor/ofxparser) and made to be framework independent. Heavily refactored by [Oliver Lowe](https://github.com/loweoj) and loosely based on the ruby [ofx-parser by Andrew A. Smith](https://github.com/aasmith/ofx-parser).
