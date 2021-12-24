@@ -1,6 +1,6 @@
 {
     "name": "gitmathias/ofxparser",
-    "description": "Simple OFX file parser",
+    "description": "OFX file parser with Investments support",
     "keywords": ["ofx", "open financial exchange", "finance", "parser"],
     "license": "MIT",
     "authors": [
