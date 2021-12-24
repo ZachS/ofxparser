@@ -1,7 +1,7 @@
 OFX Parser
 =================
 
-[![Build Status](https://github.com/gitmathias/ofxparser/actions/workflows/run-composer-scripts.yml/badge.svg)](https://github.com/gitmathias/ofxparser/actions/workflows/run-composer-scripts.yml)
+[![Unit Tests](https://github.com/gitmathias/ofxparser/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/gitmathias/ofxparser/actions/workflows/unit-tests.yml)
 
 OFX Parser is a PHP library designed to parse an OFX file downloaded from a financial institution into simple PHP objects.
 
