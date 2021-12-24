@@ -1,7 +1,7 @@
 OFX Parser
 =================
 
-[![Build Status](https://travis-ci.org/gitmathias/ofxparser.svg?branch=main)](https://travis-ci.org/gitmathias/ofxparser) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/gitmathias/ofxparser/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/gitmathias/ofxparser/?branch=main) [![Code Coverage](https://scrutinizer-ci.com/g/gitmathias/ofxparser/badges/coverage.png?b=main)](https://scrutinizer-ci.com/g/gitmathias/ofxparser/?branch=main) [![Latest Stable Version](https://poser.pugx.org/gitmathias/ofxparser/v/stable)](https://packagist.org/packages/gitmathias/ofxparser) [![License](https://poser.pugx.org/gitmathias/ofxparser/license)](https://packagist.org/packages/gitmathias/ofxparser)
+![Build Status](https://github.com/gitmathias/ofxparser/actions/workflows/run-composer-scripts.yml/badge.svg)
 
 OFX Parser is a PHP library designed to parse an OFX file downloaded from a financial institution into simple PHP objects.
 

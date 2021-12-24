@@ -33,5 +33,8 @@
         "psr-4": {
             "OfxParser\\": "lib/OfxParser/"
         }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
     }
 }
