@@ -16,6 +16,11 @@
     <include>
       <directory suffix=".php">./lib</directory>
     </include>
+    <!--
+    <report>
+      <text outputFile="php://stdout" showUncoveredFiles="false"/>
+    </report>
+    -->
   </coverage>
   <testsuite name="OFX Parser unit tests">
     <directory>./tests</directory>

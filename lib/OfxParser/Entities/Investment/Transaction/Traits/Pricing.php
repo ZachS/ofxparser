@@ -4,11 +4,18 @@ namespace OfxParser\Entities\Investment\Transaction\Traits;
 
 use SimpleXMLElement;
 
+use OfxParser\Entities\LoaderTrait;
+
 /**
  * Combo for units, price, and total
  */
 trait Pricing
 {
+    /**
+     * Traits used to define properties
+     */
+    use LoaderTrait;
+
     /**
      * @var float
      */
@@ -44,11 +51,13 @@ trait Pricing
      */
     protected function loadPricing(SimpleXMLElement $node)
     {
-        $this->units = (string) $node->UNITS;
-        $this->unitPrice = (string) $node->UNITPRICE;
-        $this->total = (string) $node->TOTAL;
-        $this->subAccountFund = (string) $node->SUBACCTFUND;
-        $this->subAccountSec = (string) $node->SUBACCTSEC;
+        $this->loadMap([
+            'units' => 'UNITS',
+            'unitPrice' => 'UNITPRICE',
+            'total' => 'TOTAL',
+            'subAccountFund' => 'SUBACCTFUND',
+            'subAccountSec' => 'SUBACCTSEC',
+        ], $node);
 
         return $this;
     }

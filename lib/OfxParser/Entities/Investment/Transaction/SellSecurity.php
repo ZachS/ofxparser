@@ -3,54 +3,26 @@
 namespace OfxParser\Entities\Investment\Transaction;
 
 use SimpleXMLElement;
-use OfxParser\Entities\AbstractEntity;
+
 use OfxParser\Entities\Investment;
-use OfxParser\Entities\Investment\Transaction\Traits\InvTran;
-use OfxParser\Entities\Investment\Transaction\Traits\SecId;
-use OfxParser\Entities\Investment\Transaction\Traits\Pricing;
+use OfxParser\Entities\Investment\Transaction\Traits\InvSell;
 
 /**
  * OFX 203 doc:
- * 13.9.2.4.3 Investment Buy/Sell Aggregates <INVBUY>/<INVSELL>
- *
- * Properties found in the <INVSELL> aggregate.
- * Used for "other securities" SELL activities and provides the 
- * base properties to extend for more specific activities.
- *
- * Required:
- * <INVTRAN> aggregate
- * <SECID> aggregate
- * <UNITS>
- * <UNITPRICE>
- * <TOTAL>
- * <SUBACCTSEC>
- * <SUBACCTFUND>
- *
- * Optional:
- * <GAIN>
- * ...many...
- *
- * Partial implementation.
+ * 13.9.2.4.4 Investment Transaction Aggregates
+ * <SELLOTHER> is simply an <INVSELL>
  */
 class SellSecurity extends Investment
 {
     /**
      * Traits used to define properties
      */
-    use InvTran;
-    use SecId;
-    use Pricing;
+    use InvSell;
 
     /**
      * @var string
      */
     public $nodeName = 'SELLOTHER';
-
-    /**
-     * How much gain is on the sale?
-     * @var number
-     */
-    public $gain = null;
 
     /**
      * Imports the OFX data for this node.
@@ -59,14 +31,7 @@ class SellSecurity extends Investment
      */
     public function loadOfx(SimpleXMLElement $node)
     {
-        // Transaction data is nested within <INVBUY> child node
-        $this->loadInvTran($node->INVSELL->INVTRAN)
-            ->loadSecId($node->INVSELL->SECID)
-            ->loadPricing($node->INVSELL)
-            ->loadMap(array(
-                'gain' => 'GAIN',
-            ), $node->INVSELL);
-
+        $this->loadInvSell($node->INVSELL);
         return $this;
     }
 }

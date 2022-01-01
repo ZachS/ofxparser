@@ -60,8 +60,8 @@ class InvestmentTest extends TestCase
                 'settlementDate' => new \DateTime('2011-02-01'),
                 'securityId' => '822722622',
                 'securityIdType' => 'CUSIP',
-                'units' => '',
-                'unitPrice' => '',
+                'units' => null,     // Not part of INCOME definition
+                'unitPrice' => null, // Not part of INCOME definition
                 'total' => '12.59',
                 'incomeType' => 'DIV',
                 'subAccountSec' => 'CASH',
@@ -78,7 +78,7 @@ class InvestmentTest extends TestCase
                 'total' => '-6.97',
                 'incomeType' => 'DIV',
                 'subAccountSec' => 'CASH',
-                'subAccountFund' => '',
+                'subAccountFund' => null, // Not part of REINVEST definition
                 'actionCode' => 'REINVEST',
             ),
             '300100' => array(
@@ -159,7 +159,7 @@ class InvestmentTest extends TestCase
                     'total' => '-6.97',
                     'incomeType' => 'DIV',
                     'subAccountSec' => 'CASH',
-                    'subAccountFund' => '',
+                    'subAccountFund' => null, // Not a required node
                     'actionCode' => 'REINVEST',
                 ),
             ),
