@@ -92,39 +92,10 @@ class ParserTest extends TestCase
     /**
      * @return array
      */
-    public function closeUnclosedXmlTagsProvider()
-    {
-        return [
-            ['<SOMETHING>', '<SOMETHING>'],
-            ['<SOMETHING>foo</SOMETHING>', '<SOMETHING>foo'],
-            ['<SOMETHING>foo</SOMETHING>', '<SOMETHING>foo</SOMETHING>'],
-            ['<BANKID>XXXXX</BANKID>', '<BANKID>XXXXX</BANKID>'],
-            ['<ACCTID>XXXXXXXXXXX</ACCTID>', '<ACCTID>XXXXXXXXXXX</ACCTID>'],
-            ['<ACCTID>-198.98</ACCTID>', '<ACCTID>-198.98</ACCTID>'],
-            ['<ACCTID>-198.98</ACCTID>', '<ACCTID>-198.98'],
-            ['<MEMO></MEMO>', '<MEMO>'],
-        ];
-    }
-
-    /**
-     * @dataProvider closeUnclosedXmlTagsProvider
-     * @param $expected
-     * @param $input
-     */
-    public function testCloseUnclosedXmlTags($expected, $input)
-    {
-        $method = new \ReflectionMethod(Parser::class, 'closeUnclosedXmlTags');
-        $method->setAccessible(true);
-
-        $parser = new Parser();
-
-        self::assertEquals($expected, $method->invoke($parser, $input));
-    }
-
     public function convertSgmlToXmlProvider()
     {
         return [
-            [<<<HERE
+            'missing closing tag w/out ampersand' => [<<<HERE
 <SOMETHING>
     <FOO>bar
     <BAZ>bat</BAZ>
@@ -136,7 +107,21 @@ HERE
 <BAZ>bat</BAZ>
 </SOMETHING>
 HERE
-            ], [<<<HERE
+            ],
+            'missing closing tag with ampersand' => [<<<HERE
+<SOMETHING>
+    <FOO>bar & restaurant
+    <BAZ>bat</BAZ>
+</SOMETHING>
+HERE
+        , <<<HERE
+<SOMETHING>
+<FOO>bar &amp; restaurant</FOO>
+<BAZ>bat</BAZ>
+</SOMETHING>
+HERE
+            ],
+            'everything matching from the start' => [<<<HERE
 <BANKACCTFROM>
 <BANKID>XXXXX</BANKID>
 <BRANCHID>XXXXX</BRANCHID>
@@ -152,17 +137,37 @@ HERE
 <ACCTTYPE>CHECKING</ACCTTYPE>
 </BANKACCTFROM>
 HERE
-            ],[<<<HERE
-<SOMETHING>
-    <FOO>bar & restaurant
-    <BAZ>bat</BAZ>
-</SOMETHING>
+            ],
+            'empty memo tag outlier' => [<<<HERE
+<OFX><MEMO></OFX>
 HERE
-        , <<<HERE
-<SOMETHING>
-<FOO>bar &amp; restaurant</FOO>
-<BAZ>bat</BAZ>
-</SOMETHING>
+                , <<<HERE
+<OFX>
+<MEMO></MEMO>
+</OFX>
+HERE
+            ],
+            'empty container' => [<<<HERE
+<OFX>
+HERE
+                , <<<HERE
+<OFX></OFX>
+HERE
+            ],
+            'container with value, missing closing tag' => [<<<HERE
+<SOMETHING>foo
+HERE
+                , <<<HERE
+<SOMETHING>foo</SOMETHING>
+HERE
+            ],
+            'nested container with negative value, missing closing tag' => [<<<HERE
+<OFX><ACCTID>-198.98</OFX>
+HERE
+                , <<<HERE
+<OFX>
+<ACCTID>-198.98</ACCTID>
+</OFX>
 HERE
             ],
         ];

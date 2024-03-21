@@ -60,7 +60,6 @@ class Parser
         if (stripos($ofxHeader, '<?xml') === 0) {
             $ofxXml = $ofxSgml;
         } else {
-            $ofxSgml = $this->conditionallyAddNewlines($ofxSgml);
             $ofxXml = $this->convertSgmlToXml($ofxSgml);
         }
 
@@ -70,21 +69,6 @@ class Parser
         $ofx->buildHeader($header);
 
         return $ofx;
-    }
-
-    /**
-     * Detect if the OFX file is on one line. If it is, add newlines automatically.
-     *
-     * @param string $ofxContent
-     * @return string
-     */
-    private function conditionallyAddNewlines($ofxContent)
-    {
-        if (preg_match('/<OFX>.*<\/OFX>/', $ofxContent) === 1) {
-            return str_replace('<', "\n<", $ofxContent); // add line breaks to allow XML to parse
-        }
-
-        return $ofxContent;
     }
 
     /**
@@ -108,33 +92,6 @@ class Parser
     }
 
     /**
-     * Detect any unclosed XML tags - if they exist, close them
-     *
-     * @param string $line
-     * @return string
-     */
-    private function closeUnclosedXmlTags($line)
-    {
-        // Special case discovered where empty content tag wasn't closed
-        $line = trim($line);
-        if (preg_match('/<MEMO>$/', $line) === 1) {
-            return '<MEMO></MEMO>';
-        }
-
-        // Matches: <SOMETHING>blah
-        // Does not match: <SOMETHING>
-        // Does not match: <SOMETHING>blah</SOMETHING>
-        if (preg_match(
-            "/<([A-Za-z0-9.]+)>([\wà-úÀ-Ú0-9\.\-\_\+\, ;:\[\]\'\&\/\\\*\(\)\+\{\|\}\!\£\$\?=@€£#%±§~`\"]+)$/",
-            $line,
-            $matches
-        )) {
-            return "<{$matches[1]}>{$matches[2]}</{$matches[1]}>";
-        }
-        return $line;
-    }
-
-    /**
      * Parse the SGML Header to an Array
      *
      * @param string $ofxHeader
@@ -155,10 +112,13 @@ class Parser
             // Only parse OFX headers and not XML headers.
             $ofxHeader = preg_replace('/<\?xml .*?\?>\n?/', '', $ofxHeader);
             $ofxHeader = preg_replace(['/"/', '/\?>/', '/<\?OFX/i'], '', $ofxHeader);
+
+            // <? // The syntax parser is confused by the regex above... this unconfuses it.
+
             $ofxHeaderLine = explode(' ', trim($ofxHeader));
 
             foreach ($ofxHeaderLine as $value) {
-                $tag = explode('=', $value);
+                $tag = explode('=', trim($value));
                 $header[$tag[0]] = $tag[1];
             }
 
@@ -167,7 +127,7 @@ class Parser
 
         $ofxHeaderLines = explode("\n", $ofxHeader);
         foreach ($ofxHeaderLines as $value) {
-            $tag = explode(':', $value);
+            $tag = explode(':', trim($value));
             $header[$tag[0]] = $tag[1];
         }
 
@@ -182,32 +142,53 @@ class Parser
      */
     private function convertSgmlToXml($sgml)
     {
+        // Add line breaks before all tags to fix parse errors
+        $sgml = preg_replace('!<(([^/][A-Za-z0-9.]*)|(/[A-Za-z0-9.]+))>!', "\n<\\1>", $sgml);
+
+        // Turn all special characters into ampersand?
         $sgml = preg_replace('/&(?!#?[a-z0-9]+;)/', '&amp;', $sgml);
 
         $lines = explode("\n", $sgml);
         $tags = [];
 
         foreach ($lines as $i => &$line) {
-            $line = trim($this->closeUnclosedXmlTags($line)) . "\n";
+            $line = trim($line) . "\n";
 
             // Matches tags like <SOMETHING> or </SOMETHING>
-            if (!preg_match("/^<(\/?[A-Za-z0-9.]+)>$/", trim($line), $matches)) {
+            if (!preg_match("!^<(/?[A-Za-z0-9.]+)>(.*)$!", trim($line), $matches)) {
                 continue;
             }
 
-            // If matches </SOMETHING>, looks back and replaces all tags like
-            // <OTHERTHING> to <OTHERTHING/> until finds the opening tag <SOMETHING>
-            if ($matches[1][0] == '/') {
+            // If matches </SOMETHING>, looks back and closes all unmatched tags like
+            // <OTHERTHING>VAL to <OTHERTHING>VAL</OTHERTHING> until finds the opening tag <SOMETHING>
+            if ($matches[1][0] == '/') { // If a closing tag...
                 $tag = substr($matches[1], 1);
 
                 while (($last = array_pop($tags)) && $last[1] != $tag) {
-                    $lines[$last[0]] = "<{$last[1]}/>";
+                    $lines[$last[0]] = "<{$last[1]}>{$last[2]}</{$last[1]}>";
                 }
             } else {
-                $tags[] = [$i, $matches[1]];
+                $tags[] = [$i, $matches[1], $matches[2]];
             }
         }
 
-        return implode("\n", array_map('trim', $lines));
+        // Clean up by closing any remaining tags
+        if ($tags) {
+            while ($last = array_pop($tags)) {
+                $lines[] = "</{$last[1]}>";
+            }
+        }
+
+        // Jam all our corrected lines into one happy line again!
+        // Then break out open tags for more readable/testable XML
+        $ret = implode('', array_map('trim', $lines));
+        $ret = trim(preg_replace('!<([^/][A-Za-z0-9.]*)>!', "\n<\\1>", $ret));
+
+        // Finally, break out multiple close tags on the same line
+        while (preg_match('!(</[A-Za-z0-9.]+>){2}!', $ret) === 1) {
+            $ret = preg_replace('!(</[A-Za-z0-9.]+>)(</[A-Za-z0-9.]+>)!', "\\1\n\\2", $ret);
+        }
+
+        return $ret;
     }
 }
