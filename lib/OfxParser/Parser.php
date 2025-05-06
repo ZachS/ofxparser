@@ -52,7 +52,7 @@ class Parser
         $ofxContent = str_replace(["\r\n", "\r"], "\n", $ofxContent);
         $ofxContent = utf8_encode($ofxContent);
 
-        $sgmlStart = stripos($ofxContent, '<OFX>');
+        $sgmlStart = stripos($ofxContent, '<OFX');
         $ofxHeader =  trim(substr($ofxContent, 0, $sgmlStart));
         $header = $this->parseHeader($ofxHeader);
 
